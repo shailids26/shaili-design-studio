@@ -24,9 +24,12 @@ const areaUnits = ['sq ft', 'sq m'];
 
     <div class="lg:col-span-7 lg:col-start-6">
       <p id="proj-note" class="mb-6 border border-primary p-4 text-sm" hidden></p>
-      <form id="enquiry" name="studio-enquiry" method="POST" action="/thank-you/" data-netlify="true" data-netlify-honeypot="bot-field" novalidate class="grid gap-6" data-projects={JSON.stringify(map)}>
-        <input type="hidden" name="form-name" value="studio-enquiry" />
-        <p class="hidden" aria-hidden="true"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+      <form id="enquiry" method="POST" action="https://api.web3forms.com/submit" novalidate class="grid gap-6" data-projects={JSON.stringify(map)}>
+        <input type="hidden" name="access_key" value={studio.web3formsKey} />
+        <input type="hidden" name="subject" value="New enquiry: Shaili Design Studio website" />
+        <input type="hidden" name="from_name" value="Shaili Design Studio website" />
+        {studio.siteUrl && <input type="hidden" name="redirect" value={`${studio.siteUrl.replace(/\/$/, '')}/thank-you/`} />}
+        <input type="checkbox" name="botcheck" class="hidden" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <input type="hidden" name="project" id="f-project" value="" />
         <input type="hidden" name="source" value="website contact form" />
 
@@ -50,7 +53,8 @@ const areaUnits = ['sq ft', 'sq m'];
 
         <div><label class="flex gap-3 text-sm items-start"><input type="checkbox" id="consent" name="consent" value="yes" required class="mt-1 h-5 w-5 accent-[hsl(44_53%_54%)]" /><span>I agree the studio may reply to me about this enquiry. See the <a class="underline" href="/privacy/">privacy page</a>. *</span></label></div>
 
-        <div><button type="submit" id="send" class="btn btn-solid"><span>Send enquiry</span></button>
+        {!studio.web3formsKey && <p class="mb-4 border border-primary p-3 text-sm">The enquiry form is not connected yet (owner: add the Web3Forms access key in studio.ts).</p>}
+        <div><button type="submit" id="send" disabled={!studio.web3formsKey} class="btn btn-solid"><span>Send enquiry</span></button>
           <p id="status" role="status" aria-live="polite" class="mt-4 text-sm"></p></div>
       </form>
     </div>
@@ -91,9 +95,9 @@ const areaUnits = ['sq ft', 'sq m'];
     if (!validate()) return;
     send.disabled = true; status.textContent = 'Sending…';
     try {
-      const body = new URLSearchParams(new FormData(form) as any).toString();
-      const res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
-      if (!res.ok) throw new Error(String(res.status));
+      const res = await fetch(form.action, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || !out.success) throw new Error(String(res.status));
       location.href = '/thank-you/';
     } catch {
       status.textContent = 'Your enquiry could not be sent. Your details are still here. Please try again, or email the studio if it keeps happening.';

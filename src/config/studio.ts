@@ -6,4 +6,5 @@ export const studio = {
   founder: { name: 'Shaili Nimje', role: 'Architect', bio: '', portrait: '/images/founder.jpg' },
   contact: { email: 'shailids26@gmail.com', phone: '', whatsapp: '', address: '' }, // whatsapp: digits only incl. country code
   social: { instagram: 'https://www.instagram.com/shaili_design_studio?mdxt=aHJjbDY0emQzcmI2', facebook: 'https://www.facebook.com/share/1CEr3tEYNg/' }, // full URLs
+  web3formsKey: 'dbd9676b-7ae6-4506-8723-e78ac4b43fef',
 };

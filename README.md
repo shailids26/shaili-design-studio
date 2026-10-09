@@ -1,6 +1,6 @@
 # Shaili Design Studio website
 
-Astro (static) + Tailwind v4 + GSAP, hosted on Netlify with Netlify Forms.
+Astro (static) + Tailwind v4 + GSAP, hosted on Netlify; enquiries delivered by Web3Forms.
 
 ## Run locally
 ```
@@ -27,13 +27,11 @@ All in `src/data/projects.ts` (annotated `mk(...)` helper = sample shape).
 ## Deploy on Netlify (needs your account)
 **Git (recommended):** push to GitHub → Netlify → *Add new site → Import from Git*. Settings come from `netlify.toml` (build `npm run build`, publish `dist`, Node 22).
 **Manual:** run `npm run build`, then drag the **`dist`** folder into Netlify *Sites → Add new site → Deploy manually*. (Note: manual uploads still detect forms in the built HTML.)
-After first deploy:
-1. *Project → Forms*: confirm **studio-enquiry** is listed. If not, enable form detection (Forms → Enable form detection) and redeploy.
-2. Submit one test enquiry on the live `/contact/` page; confirm it appears under Forms → Submissions.
-3. *Forms → Form notifications → Add notification → Email notification*: choose **studio-enquiry** and enter the owner's inbox. Test it.
-4. Replies: Netlify's notification is not from the client. Reply to the address in the **email** field of the notification, not to Netlify.
-5. Review spam under Forms → Verified/Spam. Change the recipient in the same notification settings. Check plan allowances on Netlify's current pricing page (free plans have monthly form limits).
-6. Optional: *Domain management → Add a domain*; HTTPS is provisioned automatically. Then set `siteUrl`, redeploy.
+After first deploy: enquiries use **Web3Forms** (free, 250/month at time of writing; check their pricing page), not Netlify Forms.
+1. Go to web3forms.com → create a form, enter the inbox for enquiries, verify it by email, and copy the **access key**.
+2. Paste it into `web3formsKey` in `src/config/studio.ts`, then commit and push (or rebuild and re-upload `dist`).
+3. Open the live `/contact/` page, send one test enquiry and confirm the email arrives (check spam). Reply to the client using the address in the email's **email** field.
+4. Optional: *Domain management → Add a domain* in Netlify (HTTPS is automatic), then set `siteUrl` and redeploy.
 Rollback: *Deploys → pick an earlier deploy → Publish deploy*.
 
 No tokens or passwords are in this repository; keep it that way.
