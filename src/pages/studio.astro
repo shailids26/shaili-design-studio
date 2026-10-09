@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import { studio } from '../config/studio';
+const f = studio.founder;
+---
+<Base title="Studio" description="The philosophy and people behind Shaili Design Studio.">
+  <section class="wrap section grid gap-16 md:grid-cols-12">
+    <div class="md:col-span-7">
+      <p class="num mb-4">The studio</p>
+      <h1 class="h-xl">Quiet spaces, <span class="gold-i">carefully</span> made.</h1>
+      <div class="mt-10 space-y-6 lead">
+        <p>Shaili Design Studio practises architecture and interior design together. We believe a building and its rooms should be designed as one, so light, proportion, material and detail support each other.</p>
+        <p>Each project begins by listening: to the site, to the people who will use the space, and to what they want it to feel like. From there we design with restraint, favouring honest materials and clear, calm layouts.</p>
+        {f.bio && <p>{f.bio}</p>}
+      </div>
+      {f.name && <p class="mt-10 font-display text-3xl">{f.name}{f.role && <span class="text-muted-foreground text-xl">, {f.role}</span>}</p>}
+      <a href="/contact/" class="btn mt-10"><span>Discuss your project</span></a>
+    </div>
+    <div class="md:col-span-4 md:col-start-9"><div class="img-wrap aspect-[4/5]"><img src={f.portrait} alt={f.name ? `Portrait of ${f.name}` : 'Portrait of the founder of Shaili Design Studio'} width="1024" height="1536" class="h-full w-full object-cover object-[50%_20%]" /></div></div>
+  </section>
+</Base>

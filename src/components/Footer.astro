@@ -1,0 +1,19 @@
+---
+import { studio } from '../config/studio';
+import Brand from './Brand.astro';
+const s = studio.social;
+const socials = [['Instagram', s.instagram], ['Facebook', s.facebook]].filter(([, u]) => u);
+---
+<footer class="border-t border-border pattern-grid">
+  <div class="wrap flex flex-col gap-10 py-16 md:flex-row md:items-center md:justify-between">
+    <div>
+      <a href="/" aria-label="Home"><Brand size="lg" /></a>
+      <p class="mt-4 max-w-xs text-sm text-muted-foreground">{studio.tagline}</p>
+    </div>
+    <div class="flex flex-wrap gap-x-10 gap-y-3 text-xs uppercase tracking-[0.2em]">
+      {socials.map(([n, u]) => <a class="border-b border-primary pb-1 hover:text-primary" href={u} rel="noopener noreferrer" target="_blank">{n}</a>)}
+      {studio.contact.email && <a class="border-b border-primary pb-1 hover:text-primary" href={`mailto:${studio.contact.email}`}>{studio.contact.email}</a>}
+    </div>
+  </div>
+  <div class="border-t border-border"><p class="wrap py-6 text-xs text-muted-foreground">© {new Date().getFullYear()} {studio.name}</p></div>
+</footer>

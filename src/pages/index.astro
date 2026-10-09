@@ -1,0 +1,96 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { studio } from '../config/studio';
+import { featured } from '../data/projects';
+const steps = [['Consultation', 'We listen to your site, needs, schedule and budget, and agree what the project should achieve.'], ['Concept development', 'Sketches, plans and references explore options until one direction feels right.'], ['Detailed design', 'The chosen concept is refined into drawings, materials and finishes you can review.'], ['Agreed delivery and support', 'We define together what support you need as the design moves toward realisation.']];
+const f = studio.founder;
+---
+<Base title={studio.name} description="Shaili Design Studio is an architecture and interior design studio. Explore our projects and start a conversation.">
+  <section class="relative isolate flex min-h-[calc(100svh-5rem)] items-end overflow-hidden">
+    <img src="/images/demo/hero.svg" alt="" width="2000" height="1200" fetchpriority="high" loading="eager" class="absolute inset-0 -z-20 h-full w-full object-cover" />
+    <div class="absolute inset-0 -z-10 bg-background/80"></div>
+    <svg class="plan absolute inset-y-0 right-0 -z-10 h-full w-full opacity-30 md:w-[62%] md:opacity-55" viewBox="0 0 1080 1080" preserveAspectRatio="xMaxYMid meet" fill="none" stroke="hsl(44 53% 54%)" stroke-width="4" stroke-linecap="square" aria-hidden="true" focusable="false">
+      <path pathLength="1" d="M237 432A287 287 0 0 1 811 432V928" />
+      <path pathLength="1" style="animation-delay:.5s" d="M237 928V462H385V928" />
+      <path pathLength="1" style="animation-delay:1s" d="M435 928V395H465V928" />
+      <path pathLength="1" style="animation-delay:1.3s" d="M504 928V295H534V928" />
+      <path pathLength="1" style="animation-delay:1.6s" d="M593 928V215" />
+      <path pathLength="1" style="animation-delay:1.9s" d="M603 928V627A104 104 0 0 1 811 627" />
+    </svg>
+    <div class="wrap pb-16 pt-32 md:pb-24">
+      <p class="num mb-6">Architecture + Interiors</p>
+      <h1 class="h-xl max-w-5xl">Spaces shaped by <span class="gold-i">light</span>, made for living.</h1>
+      <p class="lead mt-8 text-foreground/80">Shaili Design Studio designs homes and interiors with a clear point of view: calm structure, honest materials and rooms that feel right to live in.</p>
+      <div class="mt-10 flex flex-wrap gap-4">
+        <a href="/projects/" class="btn btn-solid"><span>Explore projects</span></a>
+        <a href="/contact/" class="btn"><span>Discuss your project</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap grid gap-16 md:grid-cols-12 md:items-center" aria-labelledby="intro">
+    <div class="md:col-span-5" data-reveal>
+      <div class="img-wrap aspect-[4/5]"><img data-parallax src={f.portrait} alt={f.name ? `Portrait of ${f.name}` : 'Portrait of the founder of Shaili Design Studio'} width="1024" height="1536" loading="lazy" class="h-[112%] w-full object-cover object-[50%_20%]" /></div>
+    </div>
+    <div class="md:col-span-6 md:col-start-7" data-reveal>
+      <p class="num mb-4">01</p>
+      <h2 id="intro" class="h-lg">Design that begins with how you <span class="gold-i">live</span>.</h2>
+      <p class="lead mt-8">We treat architecture and interiors as one conversation. Structure, light, furniture and finish are considered together so a home reads as a single, considered whole.</p>
+      {f.name && <p class="mt-6 font-display text-2xl">{f.name}{f.role && <span class="text-muted-foreground text-lg">, {f.role}</span>}</p>}
+      <a href="/studio/" class="mt-8 inline-block border-b border-primary pb-1 text-xs tracking-[0.2em] uppercase hover:text-primary">About the studio</a>
+    </div>
+  </section>
+
+  <section class="section border-y border-border pattern-lines" aria-labelledby="services">
+    <div class="wrap">
+      <p class="num mb-4" data-reveal>02</p>
+      <h2 id="services" class="h-lg mb-16 max-w-3xl" data-reveal>Two disciplines, one <span class="gold-i">vision</span>.</h2>
+      <div class="grid gap-px bg-border md:grid-cols-2">
+        {[['Architecture', 'New homes, extensions and small buildings, planned around site, climate, light and the way you move through space.'], ['Interior design', 'Layouts, joinery, lighting, materials and furnishings that make rooms comfortable, useful and quietly distinctive.']].map(([t, d], i) => (
+          <a href="/services/" class="group relative block bg-background p-10 md:p-16 min-h-[22rem] overflow-hidden" data-reveal>
+            <span class="text-stroke-light absolute -right-4 -top-6 font-display text-[11rem] leading-none select-none" aria-hidden="true">0{i + 1}</span>
+            <h3 class="relative font-display text-5xl group-hover:text-primary transition-colors">{t}</h3>
+            <p class="lead relative mt-6">{d}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" aria-labelledby="featured">
+    <div class="mb-16 flex flex-wrap items-end justify-between gap-6">
+      <div data-reveal><p class="num mb-4">03</p><h2 id="featured" class="h-lg gold-i">Projects</h2></div>
+      <a href="/projects/" class="btn" data-reveal><span>View more projects</span></a>
+    </div>
+    <div class="pf">{featured.map((p, i) => <ProjectCard p={p} i={i} />)}</div>
+    <p class="mt-12 text-xs text-muted-foreground">Sample portfolio: projects shown are illustrative placeholders, not completed commissions.</p>
+  </section>
+
+  <section class="section border-t border-border" aria-labelledby="process">
+    <div class="wrap">
+      <p class="num mb-4">04</p>
+      <h2 id="process" class="h-lg mb-16">How we <span class="gold-i">work</span></h2>
+      <ol class="grid gap-10 md:grid-cols-4">
+        {steps.map(([t, d], i) => (
+          <li class="border-t border-primary pt-6" data-reveal style={`--d:${i * 0.1}s`}>
+            <span class="num">0{i + 1}</span><h3 class="mt-3 font-display text-3xl">{t}</h3><p class="mt-3 text-sm leading-7 text-muted-foreground">{d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="relative overflow-hidden border-t border-border pattern-grid">
+    <div class="wrap section text-center" data-reveal>
+      <p class="font-display text-primary text-[clamp(3rem,12vw,10rem)] leading-none" aria-hidden="true">Let’s talk</p>
+      <h2 class="h-lg mx-auto mt-8 max-w-3xl">Have a space in mind? <span class="gold-i">Tell us about it.</span></h2>
+      <p class="lead mx-auto mt-6">Share a few details and we will reply about next steps.</p>
+      <div class="mt-10 flex flex-wrap justify-center gap-4">
+        <a href="/contact/" class="btn btn-solid"><span>Start an enquiry</span></a>
+        {studio.contact.email && <a href={`mailto:${studio.contact.email}`} class="btn"><span>{studio.contact.email}</span></a>}
+        {studio.contact.whatsapp && <a href={`https://wa.me/${studio.contact.whatsapp}`} class="btn" rel="noopener"><span>WhatsApp</span></a>}
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,110 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { projects, related } from '../../data/projects';
+export function getStaticPaths() { return projects.map((p) => ({ params: { slug: p.slug }, props: { p } })); }
+const { p } = Astro.props;
+const facts = [['Status', p.status], ['Location', p.location], ['Area', p.area], ['Year', p.year]].filter(([, v]) => v);
+const ba = p.beforeAfter;
+const blocks = [['Design brief', p.brief], ['Design response', p.response]];
+---
+<Base title={p.title} description={`${p.title}: ${p.overview}`}>
+  <article>
+    <div class="wrap pt-10 text-xs text-muted-foreground">
+      <nav aria-label="Breadcrumb"><ol class="flex flex-wrap gap-2">
+        <li><a class="hover:text-primary" href="/">Home</a> /</li><li><a class="hover:text-primary" href="/projects/">Projects</a> /</li><li aria-current="page" class="text-foreground">{p.title}</li>
+      </ol></nav>
+    </div>
+    <header class="wrap pt-10 pb-12">
+      <p class="num mb-4">{p.category}</p>
+      <h1 class="h-xl">{p.title}</h1>
+      {p.demo && <p class="mt-4 inline-block border border-primary px-3 py-2 text-xs text-primary">Illustrative sample project: not a completed studio commission</p>}
+    </header>
+    <div class="img-wrap max-h-[80vh]"><img src={p.cover} alt={p.coverAlt} width="1600" height="1100" fetchpriority="high" class="h-full max-h-[80vh] w-full object-cover" /></div>
+
+    <section class="wrap grid gap-16 py-24 md:grid-cols-12">
+      <dl class="md:col-span-3 grid gap-5 content-start">
+        {facts.map(([k, v]) => <div class="border-t border-border pt-3"><dt class="text-xs tracking-widest uppercase text-muted-foreground">{k}</dt><dd class="font-display text-2xl">{v}</dd></div>)}
+      </dl>
+      <div class="md:col-span-8 md:col-start-5 space-y-12">
+        <p class="font-display text-3xl md:text-4xl leading-snug">{p.overview}</p>
+        {blocks.map(([t, d]) => <div data-reveal><h2 class="font-display text-3xl text-primary italic">{t}</h2><p class="lead mt-3">{d}</p></div>)}
+        <div class="grid gap-10 sm:grid-cols-2">
+          <div><h2 class="font-display text-3xl text-primary italic">Material palette</h2><ul class="mt-3 space-y-1 text-muted-foreground">{p.materials.map((m) => <li>{m}</li>)}</ul></div>
+          <div><h2 class="font-display text-3xl text-primary italic">Key features</h2><ul class="mt-3 space-y-1 text-muted-foreground">{p.features.map((m) => <li>{m}</li>)}</ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap pb-24" aria-labelledby="gal">
+      <h2 id="gal" class="h-lg mb-10">Gallery</h2>
+      <ul id="gallery" class="grid gap-6 md:grid-cols-2">
+        {p.gallery.map((g, i) => (
+          <li class:list={[g.wide && 'md:col-span-2']} data-reveal>
+            <button type="button" data-lb={i} data-src={g.src} data-alt={g.alt} data-cap={g.caption} class="img-wrap card-link block w-full text-left" aria-label={`Open image ${i + 1} of ${p.gallery.length}: ${g.caption}`}>
+              <img src={g.src} alt={g.alt} width={g.wide ? 1600 : 1000} height={g.wide ? 1000 : 1250} loading="lazy" decoding="async" class="w-full object-cover" />
+            </button>
+            <p class="mt-2 text-xs text-muted-foreground">{g.caption}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    {ba && (
+      <section class="wrap pb-24" aria-labelledby="ba">
+        <h2 id="ba" class="h-lg mb-8">Before and after</h2>
+        <div id="ba-box" class="relative mx-auto max-w-4xl overflow-hidden" style="--pos:50%">
+          <img src={ba.after} alt={ba.afterAlt} class="block w-full" />
+          <img src={ba.before} alt={ba.beforeAlt} class="absolute inset-0 h-full w-full object-cover" style="clip-path:inset(0 calc(100% - var(--pos)) 0 0)" />
+          <input id="ba-range" type="range" min="0" max="100" value="50" aria-label="Reveal after image. Drag left for before, right for after" class="absolute inset-x-0 bottom-3 mx-auto w-3/4" />
+        </div>
+      </section>
+    )}
+
+    <section class="border-y border-border py-20 text-center wrap">
+      <a href={`/contact/?project=${p.slug}`} class="btn btn-solid"><span>Discuss a similar project</span></a>
+    </section>
+
+    <section class="wrap py-24" aria-labelledby="rel">
+      <h2 id="rel" class="h-lg mb-12">Related <span class="gold-i">projects</span></h2>
+      <div class="grid gap-10 md:grid-cols-3">{related(p).map((r) => <ProjectCard p={r} />)}</div>
+      <a href="/projects/" class="mt-14 inline-block border-b border-primary pb-1 text-xs tracking-[0.2em] uppercase hover:text-primary">Back to all projects</a>
+    </section>
+  </article>
+
+  <dialog id="lb" class="m-auto w-[min(96vw,1200px)] max-h-[96vh] overflow-hidden bg-background p-4 md:p-6" aria-label="Image gallery">
+    <div class="flex items-center justify-between pb-3">
+      <p id="lb-count" class="text-xs tracking-widest text-muted-foreground" aria-live="polite"></p>
+      <button type="button" id="lb-close" class="min-h-12 min-w-12 text-xs tracking-[0.2em] uppercase" aria-label="Close gallery">Close</button>
+    </div>
+    <div class="flex items-center gap-2">
+      <button type="button" id="lb-prev" class="min-h-12 min-w-12 text-2xl hover:text-primary" aria-label="Previous image">‹</button>
+      <figure class="flex-1 text-center min-w-0"><img id="lb-img" alt="" class="lb-img mx-auto" /><figcaption id="lb-cap" class="mt-3 text-sm text-muted-foreground"></figcaption></figure>
+      <button type="button" id="lb-next" class="min-h-12 min-w-12 text-2xl hover:text-primary" aria-label="Next image">›</button>
+    </div>
+  </dialog>
+</Base>
+<script>
+  const btns = [...document.querySelectorAll<HTMLButtonElement>('[data-lb]')];
+  const dlg = document.getElementById('lb') as HTMLDialogElement;
+  const img = document.getElementById('lb-img') as HTMLImageElement;
+  const cap = document.getElementById('lb-cap')!, count = document.getElementById('lb-count')!;
+  let i = 0, opener: HTMLElement | null = null;
+  const show = (n: number) => {
+    i = (n + btns.length) % btns.length; const b = btns[i];
+    img.src = b.dataset.src!; img.alt = b.dataset.alt!; cap.textContent = b.dataset.cap!;
+    count.textContent = `${i + 1} / ${btns.length}`;
+  };
+  btns.forEach((b, n) => b.addEventListener('click', () => { opener = b; show(n); dlg.showModal(); }));
+  document.getElementById('lb-prev')!.onclick = () => show(i - 1);
+  document.getElementById('lb-next')!.onclick = () => show(i + 1);
+  document.getElementById('lb-close')!.onclick = () => dlg.close();
+  dlg.addEventListener('close', () => opener?.focus());
+  dlg.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(i - 1); if (e.key === 'ArrowRight') show(i + 1); });
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  let x0 = 0;
+  dlg.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+  dlg.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) show(dx < 0 ? i + 1 : i - 1); });
+  const r = document.getElementById('ba-range') as HTMLInputElement | null;
+  r?.addEventListener('input', () => document.getElementById('ba-box')!.style.setProperty('--pos', r.value + '%'));
+</script>

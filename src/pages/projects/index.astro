@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { projects } from '../../data/projects';
+---
+<Base title="Projects" description="Browse architecture and interior design projects from Shaili Design Studio.">
+  <section class="wrap pt-20 pb-10 md:pt-32">
+    <p class="num mb-4">Portfolio</p>
+    <h1 class="h-xl">All <span class="gold-i">projects</span></h1>
+    <p class="lead mt-6">Eight illustrative sample projects stand in until real work is added. They are not completed commissions.</p>
+  </section>
+  <section class="wrap pb-32" id="portfolio">
+    <div class="sticky top-20 z-30 -mx-6 mb-12 border-y border-border bg-background px-6 py-4 md:-mx-12 md:px-12">
+      <form id="filters" class="flex flex-wrap items-center gap-4" role="search" onsubmit="return false">
+        <div class="flex gap-2" role="group" aria-label="Filter by category">
+          {['All', 'Architecture', 'Interiors'].map((c) => <button type="button" data-filter={c} aria-pressed={c === 'All' ? 'true' : 'false'} class="min-h-12 border border-border px-5 text-xs tracking-[0.15em] uppercase aria-pressed:border-primary aria-pressed:text-primary hover:border-primary">{c}</button>)}
+        </div>
+        <label class="sr-only" for="q">Search projects by name</label>
+        <input id="q" type="search" class="field max-w-xs" placeholder="Search by name" autocomplete="off" maxlength="60" />
+        <p id="count" class="text-sm text-muted-foreground" role="status" aria-live="polite">{projects.length} projects</p>
+        <button type="button" id="reset" class="min-h-12 px-3 text-xs tracking-[0.15em] uppercase underline underline-offset-4 hover:text-primary" hidden>Reset</button>
+      </form>
+    </div>
+    <div id="grid" class="pf min-h-[60vh] content-start">
+      {projects.map((p, i) => <ProjectCard p={p} i={i} />)}
+    </div>
+    <div id="empty" hidden class="py-24 text-center">
+      <p class="font-display text-4xl">No projects match.</p>
+      <p class="lead mx-auto mt-3">Try a different name or clear the filters.</p>
+      <button type="button" id="reset2" class="btn mt-8"><span>Show all projects</span></button>
+    </div>
+  </section>
+</Base>
+<script>
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-card]')];
+  const q = document.getElementById('q') as HTMLInputElement;
+  const count = document.getElementById('count')!, empty = document.getElementById('empty')!;
+  const resets = [document.getElementById('reset')!, document.getElementById('reset2')!];
+  const btns = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+  let cat = 'All';
+  function apply() {
+    const term = q.value.trim().toLowerCase();
+    let n = 0;
+    cards.forEach((c) => {
+      const show = (cat === 'All' || c.dataset.cat === cat) && (!term || c.dataset.title!.includes(term));
+      c.hidden = !show; c.classList.add('in'); if (show) { c.dataset.pos = String(n % 4); n++; }
+    });
+    count.textContent = `${n} ${n === 1 ? 'project' : 'projects'}`;
+    empty.hidden = n !== 0;
+    btns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === cat)));
+    resets[0].hidden = cat === 'All' && !term;
+  }
+  btns.forEach((b) => b.addEventListener('click', () => { cat = b.dataset.filter!; apply(); }));
+  q.addEventListener('input', apply);
+  resets.forEach((r) => r.addEventListener('click', () => { cat = 'All'; q.value = ''; apply(); q.focus(); }));
+</script>

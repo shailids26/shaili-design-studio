@@ -1,0 +1,35 @@
+---
+import { studio } from '../config/studio';
+import Brand from './Brand.astro';
+const { current } = Astro.props;
+const links = [['Studio', '/studio/'], ['Services', '/services/'], ['Projects', '/projects/'], ['Privacy', '/privacy/']];
+const active = (h: string) => current === h || (h === '/projects/' && current.startsWith('/projects/'));
+---
+<header class="sticky top-0 z-40 bg-background/95 border-b border-border backdrop-blur-none">
+  <div class="wrap flex h-20 items-center justify-between">
+    <a href="/" aria-label={`${studio.name}, home`}><Brand /></a>
+    <nav class="hidden xl:flex items-center gap-10" aria-label="Main">
+      {links.map(([t, h]) => (
+        <a href={h} aria-current={active(h) ? 'page' : undefined} class:list={['text-xs tracking-[0.2em] uppercase py-2 border-b transition-colors hover:text-primary', active(h) ? 'border-primary text-primary' : 'border-transparent']}>{t}</a>
+      ))}
+      <a href="/contact/" class="btn !py-3"><span>Book a consultation</span></a>
+    </nav>
+    <button id="menu-open" class="xl:hidden min-h-12 min-w-12 text-xs tracking-[0.2em] uppercase" aria-expanded="false" aria-controls="menu">Menu</button>
+  </div>
+</header>
+<dialog id="menu" class="menu" aria-label="Site menu">
+  <div class="relative flex h-full flex-col pattern-lines px-6 py-6">
+    <div class="flex items-center justify-between">
+      <a href="/" aria-label="Home"><Brand /></a>
+      <button data-close class="min-h-12 min-w-12 text-xs tracking-[0.2em] uppercase" aria-label="Close menu">Close</button>
+    </div>
+    <nav class="flex flex-1 flex-col justify-center gap-2" aria-label="Mobile">
+      {links.map(([t, h], i) => (
+        <a href={h} aria-current={active(h) ? 'page' : undefined} class:list={['font-display text-5xl py-3 border-b border-border flex items-baseline gap-5', active(h) && 'text-primary']}>
+          <span class="num text-base">0{i + 1}</span>{t}
+        </a>
+      ))}
+    </nav>
+    <a href="/contact/" class="btn btn-solid w-full"><span>Book a consultation</span></a>
+  </div>
+</dialog>
