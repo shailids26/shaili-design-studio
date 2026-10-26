@@ -33,6 +33,9 @@ if (!reduced && matchMedia('(pointer: fine)').matches) {
       dot.classList.toggle('hide', !!t.closest('input,textarea,select'));
     });
     document.addEventListener('mouseleave', () => dot.classList.add('hide'));
+    // Open dialogs live in the browser's top layer, above the page, so carry the cursor inside whichever dialog is open
+    document.querySelectorAll('dialog').forEach((d) =>
+      new MutationObserver(() => (d.open ? d : document.body).appendChild(dot)).observe(d, { attributes: true, attributeFilter: ['open'] }));
     document.documentElement.classList.add('has-cursor');
   } catch { /* system cursor remains */ }
 }

@@ -4,11 +4,12 @@ import ProjectCard from '../../components/ProjectCard.astro';
 import { projects, related } from '../../data/projects';
 export function getStaticPaths() { return projects.map((p) => ({ params: { slug: p.slug }, props: { p } })); }
 const { p } = Astro.props;
-const facts = [['Status', p.status], ['Location', p.location], ['Area', p.area], ['Year', p.year]].filter(([, v]) => v);
+const facts = [['Project type', p.projectType], ['Design style', p.style], ['Location', p.location], ['Area', p.area], ['Year', p.year]].filter(([, v]) => v);
+const shown = p.gallery.filter((g) => g.src !== p.cover); // cover is already shown large at the top
+const odd = shown.length % 2 === 1;                          // odd count: first image spans full width, rest pair up
 const ba = p.beforeAfter;
-const blocks = [['Design brief', p.brief], ['Design response', p.response]];
 ---
-<Base title={p.title} description={`${p.title}: ${p.overview}`}>
+<Base title={p.title} description={`${p.title}: ${p.description}`}>
   <article>
     <div class="wrap pt-10 text-xs text-muted-foreground">
       <nav aria-label="Breadcrumb"><ol class="flex flex-wrap gap-2">
@@ -20,35 +21,39 @@ const blocks = [['Design brief', p.brief], ['Design response', p.response]];
       <h1 class="h-xl">{p.title}</h1>
       {p.demo && <p class="mt-4 inline-block border border-primary px-3 py-2 text-xs text-primary">Illustrative sample project: not a completed studio commission</p>}
     </header>
-    <div class="img-wrap max-h-[80vh]"><img src={p.cover} alt={p.coverAlt} width="1600" height="1100" fetchpriority="high" class="h-full max-h-[80vh] w-full object-cover" /></div>
+    <div class="wrap"><button type="button" data-lb="0" data-src={p.cover} data-alt={p.coverAlt} data-cap="" class="img-wrap card-link block w-full bg-card" aria-label={`Open image 1 of ${shown.length + 1}`}><img src={p.cover} alt={p.coverAlt} width="1600" height="1000" fetchpriority="high" class="mx-auto max-h-[85vh] w-auto max-w-full object-contain" /></button></div>
 
     <section class="wrap grid gap-16 py-24 md:grid-cols-12">
       <dl class="md:col-span-3 grid gap-5 content-start">
         {facts.map(([k, v]) => <div class="border-t border-border pt-3"><dt class="text-xs tracking-widest uppercase text-muted-foreground">{k}</dt><dd class="font-display text-2xl">{v}</dd></div>)}
       </dl>
       <div class="md:col-span-8 md:col-start-5 space-y-12">
-        <p class="font-display text-3xl md:text-4xl leading-snug">{p.overview}</p>
-        {blocks.map(([t, d]) => <div data-reveal><h2 class="font-display text-3xl text-primary italic">{t}</h2><p class="lead mt-3">{d}</p></div>)}
-        <div class="grid gap-10 sm:grid-cols-2">
-          <div><h2 class="font-display text-3xl text-primary italic">Material palette</h2><ul class="mt-3 space-y-1 text-muted-foreground">{p.materials.map((m) => <li>{m}</li>)}</ul></div>
-          <div><h2 class="font-display text-3xl text-primary italic">Key features</h2><ul class="mt-3 space-y-1 text-muted-foreground">{p.features.map((m) => <li>{m}</li>)}</ul></div>
-        </div>
+        <div data-reveal><h2 class="font-display text-3xl text-primary italic">Overview</h2>
+          <p class="mt-4 font-display text-2xl leading-relaxed text-foreground/90">{p.description}</p></div>
+        {p.keyFeatures.length > 0 && (
+          <div data-reveal><h2 class="font-display text-3xl text-primary italic">Key features</h2>
+            <ul class="mt-4 grid gap-x-10 sm:grid-cols-2">{p.keyFeatures.map((m) => <li class="border-t border-border py-3 text-muted-foreground">{m}</li>)}</ul></div>
+        )}
       </div>
     </section>
 
+    {shown.length > 0 && (
     <section class="wrap pb-24" aria-labelledby="gal">
-      <h2 id="gal" class="h-lg mb-10">Gallery</h2>
+      <h2 id="gal" class="font-display text-5xl text-primary italic mb-10">Gallery</h2>
       <ul id="gallery" class="grid gap-6 md:grid-cols-2">
-        {p.gallery.map((g, i) => (
-          <li class:list={[g.wide && 'md:col-span-2']} data-reveal>
-            <button type="button" data-lb={i} data-src={g.src} data-alt={g.alt} data-cap={g.caption} class="img-wrap card-link block w-full text-left" aria-label={`Open image ${i + 1} of ${p.gallery.length}: ${g.caption}`}>
-              <img src={g.src} alt={g.alt} width={g.wide ? 1600 : 1000} height={g.wide ? 1000 : 1250} loading="lazy" decoding="async" class="w-full object-cover" />
+        {shown.map((g, i) => {
+          const wide = odd && i === 0;
+          return (
+          <li class:list={[wide && 'md:col-span-2']} data-reveal>
+            <button type="button" data-lb={i + 1} data-src={g.src} data-alt={g.alt} data-cap={g.caption ?? ''} class="img-wrap card-link block w-full text-left" aria-label={`Open image ${i + 2} of ${shown.length + 1}`}>
+              <img src={g.src} alt={g.alt} width={wide ? 1600 : 1200} height={wide ? 900 : 900} loading="lazy" decoding="async" class:list={['w-full object-cover', wide ? 'aspect-[16/9]' : 'aspect-[4/3]']} />
             </button>
-            <p class="mt-2 text-xs text-muted-foreground">{g.caption}</p>
-          </li>
-        ))}
+            {g.caption && <p class="mt-2 text-xs text-muted-foreground">{g.caption}</p>}
+          </li>);
+        })}
       </ul>
     </section>
+    )}
 
     {ba && (
       <section class="wrap pb-24" aria-labelledby="ba">
@@ -75,17 +80,18 @@ const blocks = [['Design brief', p.brief], ['Design response', p.response]];
   <dialog id="lb" class="m-auto w-[min(96vw,1200px)] max-h-[96vh] overflow-hidden bg-background p-4 md:p-6" aria-label="Image gallery">
     <div class="flex items-center justify-between pb-3">
       <p id="lb-count" class="text-xs tracking-widest text-muted-foreground" aria-live="polite"></p>
-      <button type="button" id="lb-close" class="min-h-12 min-w-12 text-xs tracking-[0.2em] uppercase" aria-label="Close gallery">Close</button>
+      <button type="button" id="lb-close" class="min-h-12 border border-primary px-5 text-xs tracking-[0.2em] uppercase text-primary hover:bg-primary hover:text-primary-foreground" aria-label="Close gallery">Close</button>
     </div>
     <div class="flex items-center gap-2">
-      <button type="button" id="lb-prev" class="min-h-12 min-w-12 text-2xl hover:text-primary" aria-label="Previous image">‹</button>
+      <button type="button" id="lb-prev" class="min-h-12 min-w-12 shrink-0 border border-primary text-2xl text-primary hover:bg-primary hover:text-primary-foreground" aria-label="Previous image">‹</button>
       <figure class="flex-1 text-center min-w-0"><img id="lb-img" alt="" class="lb-img mx-auto" /><figcaption id="lb-cap" class="mt-3 text-sm text-muted-foreground"></figcaption></figure>
-      <button type="button" id="lb-next" class="min-h-12 min-w-12 text-2xl hover:text-primary" aria-label="Next image">›</button>
+      <button type="button" id="lb-next" class="min-h-12 min-w-12 shrink-0 border border-primary text-2xl text-primary hover:bg-primary hover:text-primary-foreground" aria-label="Next image">›</button>
     </div>
   </dialog>
 </Base>
 <script>
   const btns = [...document.querySelectorAll<HTMLButtonElement>('[data-lb]')];
+  if (btns.length < 2) ['lb-prev', 'lb-next'].forEach((id) => document.getElementById(id)!.hidden = true);
   const dlg = document.getElementById('lb') as HTMLDialogElement;
   const img = document.getElementById('lb-img') as HTMLImageElement;
   const cap = document.getElementById('lb-cap')!, count = document.getElementById('lb-count')!;

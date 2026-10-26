@@ -12,6 +12,6 @@ const svg = (w, h, seed, label) => {
 const slugs = ['courtyard-house','hillside-retreat','linen-brass-apartment','atelier-loft','terrace-pavilion','quiet-study','stone-gate-villa','gallery-dining-room'];
 slugs.forEach((s, i) => {
   fs.writeFileSync(`${out}${s}-cover.svg`, svg(1600, 1100, i + 1, s.replace(/-/g, ' ')));
-  [['1',1600,1000],['2',1000,1250],['3',1000,1250]].forEach(([n,w,h], j) =>
+  [["1",1600,1100]].forEach(([n,w,h], j) =>
     fs.writeFileSync(`${out}${s}-${n}.svg`, svg(w, h, i * 3 + j + 9, `${s.replace(/-/g, ' ')} · detail ${n}`)));
 });

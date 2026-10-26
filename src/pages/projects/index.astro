@@ -6,14 +6,14 @@ import { projects } from '../../data/projects';
 <Base title="Projects" description="Browse architecture and interior design projects from Shaili Design Studio.">
   <section class="wrap pt-20 pb-10 md:pt-32">
     <p class="num mb-4">Portfolio</p>
-    <h1 class="h-xl">All <span class="gold-i">projects</span></h1>
-    <p class="lead mt-6">Eight illustrative sample projects stand in until real work is added. They are not completed commissions.</p>
+    <h1 class="h-xl">Projects</h1>
+    <p class="lead mt-6">{projects.some((p) => p.demo) ? 'Illustrative sample projects stand in until real work is added. They are not completed commissions.' : 'Architecture and interior design work from the studio.'}</p>
   </section>
   <section class="wrap pb-32" id="portfolio">
     <div class="sticky top-20 z-30 -mx-6 mb-12 border-y border-border bg-background px-6 py-4 md:-mx-12 md:px-12">
       <form id="filters" class="flex flex-wrap items-center gap-4" role="search" onsubmit="return false">
         <div class="flex gap-2" role="group" aria-label="Filter by category">
-          {['All', 'Architecture', 'Interiors'].map((c) => <button type="button" data-filter={c} aria-pressed={c === 'All' ? 'true' : 'false'} class="min-h-12 border border-border px-5 text-xs tracking-[0.15em] uppercase aria-pressed:border-primary aria-pressed:text-primary hover:border-primary">{c}</button>)}
+          {['All', 'Architecture', 'Interior'].map((c) => <button type="button" data-filter={c} aria-pressed={c === 'All' ? 'true' : 'false'} class="min-h-12 border border-border px-5 text-xs tracking-[0.15em] uppercase aria-pressed:border-primary aria-pressed:text-primary hover:border-primary">{c}</button>)}
         </div>
         <label class="sr-only" for="q">Search projects by name</label>
         <input id="q" type="search" class="field max-w-xs" placeholder="Search by name" autocomplete="off" maxlength="60" />

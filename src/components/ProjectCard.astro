@@ -12,6 +12,6 @@ const pos = i % 4;
       <h3 class="font-display text-3xl md:text-4xl group-hover:text-primary transition-colors">{p.title}</h3>
       <span class="num text-sm shrink-0">{p.category}</span>
     </div>
-    <p class="mt-3 text-xs text-muted-foreground">{[p.status, p.location, p.year].filter(Boolean).join(' · ')}{p.demo && ' · Illustrative sample'}</p>
+    <p class="mt-3 text-xs text-muted-foreground">{[p.projectType, p.location, p.year].filter(Boolean).join(' · ')}{p.demo && ' · Illustrative sample'}</p>
   </a>
 </article>
